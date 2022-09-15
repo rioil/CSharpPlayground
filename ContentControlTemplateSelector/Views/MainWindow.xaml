@@ -1,0 +1,77 @@
+﻿<Window
+    x:Class="ContentControlTemplateSelector.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+    xmlns:v="clr-namespace:ContentControlTemplateSelector.Views"
+    xmlns:vm="clr-namespace:ContentControlTemplateSelector.ViewModels"
+    xmlns:m="clr-namespace:ContentControlTemplateSelector.Models"
+    Title="MainWindow"
+    Width="525"
+    Height="350">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+
+    <behaviors:Interaction.Triggers>
+        <!--  When ContentRendered event raised, Initialize method of ViewModel would be called.  -->
+        <behaviors:EventTrigger EventName="ContentRendered">
+            <l:LivetCallMethodAction MethodName="Initialize" MethodTarget="{Binding}" />
+        </behaviors:EventTrigger>
+
+        <!--  Dispose method is called, when Window closing.  -->
+        <behaviors:EventTrigger EventName="Closed">
+            <l:DataContextDisposeAction />
+        </behaviors:EventTrigger>
+
+        <!--  If you make user choose 'OK or Cancel' closing Window, then please use Window Close cancel Behavior.  -->
+
+    </behaviors:Interaction.Triggers>
+
+    <Grid>
+        <Grid.Resources>
+            <v:SampleTemplateSelector x:Key="selector"/>
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0" Content="Switch" Command="{Binding SwitchCommand}"/>
+
+        <ContentControl Grid.Row="1" Content="{Binding Item}" ContentTemplateSelector="{StaticResource selector}">
+            <ContentControl.Resources>
+                <DataTemplate x:Key="RedItemTemplate" DataType="{x:Type m:RedItem}">
+                    <TextBlock Text="{Binding Value}" Foreground="Red"/>
+                </DataTemplate>
+
+                <DataTemplate x:Key="GreenItemTemplate" DataType="{x:Type m:GreenItem}">
+                    <TextBlock Text="{Binding Value}" Foreground="Green"/>
+                </DataTemplate>
+
+                <DataTemplate x:Key="VerticalItemGroupTemplate" DataType="{x:Type m:VerticalItemGroup}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Value}"/>
+                        <ItemsControl ItemsSource="{Binding ChildItems}" ItemTemplateSelector="{StaticResource selector}" Margin="10 0 0 0"/>
+                    </StackPanel>
+                </DataTemplate>
+
+                <DataTemplate x:Key="HorizontalItemGroupTemplate" DataType="{x:Type m:HorizontalItemGroup}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Value}"/>
+                        <ItemsControl ItemsSource="{Binding ChildItems}" ItemTemplateSelector="{StaticResource selector}" Margin="10 0 0 0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
+    </Grid>
+</Window>
