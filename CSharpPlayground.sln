@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpPlayground", "CSharpPlayground\CSharpPlayground.csproj", "{93634B58-9818-4725-AB8D-0714A27057DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentControlTemplateSelector", "ContentControlTemplateSelector\ContentControlTemplateSelector.csproj", "{91EFB712-B6FD-4066-BD95-562EB0F6C459}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContentControlTemplateSelector", "ContentControlTemplateSelector\ContentControlTemplateSelector.csproj", "{91EFB712-B6FD-4066-BD95-562EB0F6C459}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp10", "CSharp10\CSharp10.csproj", "{7A7FC278-5EA5-40AF-94A4-BDF64D96DB0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{91EFB712-B6FD-4066-BD95-562EB0F6C459}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91EFB712-B6FD-4066-BD95-562EB0F6C459}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91EFB712-B6FD-4066-BD95-562EB0F6C459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A7FC278-5EA5-40AF-94A4-BDF64D96DB0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A7FC278-5EA5-40AF-94A4-BDF64D96DB0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A7FC278-5EA5-40AF-94A4-BDF64D96DB0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A7FC278-5EA5-40AF-94A4-BDF64D96DB0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
