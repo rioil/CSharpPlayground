@@ -3,6 +3,10 @@ using System.IO.Pipelines;
 
 namespace PipelinesSandbox
 {
+    /**
+     * The packet that this program parses has the following structure.
+     * | STX (1byte [0x02]) | No. (1byte) | Length (1byte) | Content ($Length byte) | ETX (1byte [0x03]) |
+     */
     internal class PacketExample
     {
         private const byte STX = 0x02;
@@ -149,6 +153,14 @@ namespace PipelinesSandbox
                 return false;
             }
 
+            /*
+             * ... | ETX | ...
+             *     |     ^ etxByte.End
+             *     ^ etxByte.Start
+             * 
+             * buffer.Slice(0, etxByte.Start) excludes ETX
+             * buffer.Slice(0, etxByte.End) includes it
+             */
             packet = buffer.Slice(0, etxByte.End);
             buffer = buffer.Slice(etxByte.End);
             return true;
