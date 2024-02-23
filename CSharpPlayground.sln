@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValueTimeoutDetection", "Va
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R3Sandbox", "R3Sandbox\R3Sandbox.csproj", "{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipelinesSandbox", "PipelinesSandbox\PipelinesSandbox.csproj", "{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
