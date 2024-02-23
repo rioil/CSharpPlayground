@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharp10", "CSharp10\CSharp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfMarkupExtension", "WpfMarkupExtension\WpfMarkupExtension.csproj", "{539FE70E-3A91-4025-AC67-8E97B3B546A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValueTimeoutDetection", "ValueTimeoutDetection\ValueTimeoutDetection.csproj", "{B4AD9868-028E-4FD9-B474-BF9ED074F7C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValueTimeoutDetection", "ValueTimeoutDetection\ValueTimeoutDetection.csproj", "{B4AD9868-028E-4FD9-B474-BF9ED074F7C0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R3Sandbox", "R3Sandbox\R3Sandbox.csproj", "{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{B4AD9868-028E-4FD9-B474-BF9ED074F7C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4AD9868-028E-4FD9-B474-BF9ED074F7C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4AD9868-028E-4FD9-B474-BF9ED074F7C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DF89AE2-A2C6-4F52-8310-956AD67D9AC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
