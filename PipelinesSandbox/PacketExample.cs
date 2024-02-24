@@ -115,16 +115,14 @@ namespace PipelinesSandbox
             index++;
 
             // get no. of packet
-            var noByte = buffer.Slice(index++, 1);
-            if (noByte.Length == 0)
+            if (!TryGetSliced(buffer, index++, 1, out var _))
             {
                 packet = default;
                 return false;
             }
 
             // get length of packet
-            var lengthByte = buffer.Slice(index++, 1);
-            if (lengthByte.Length == 0)
+            if (!TryGetSliced(buffer, index++, 1, out var lengthByte))
             {
                 packet = default;
                 return false;
@@ -132,8 +130,7 @@ namespace PipelinesSandbox
             var length = lengthByte.FirstSpan[0];
 
             // get content of packet
-            var contentBytes = buffer.Slice(index, length);
-            if (contentBytes.Length != length)
+            if (!TryGetSliced(buffer, index, length, out var _))
             {
                 packet = default;
                 return false;
@@ -141,13 +138,7 @@ namespace PipelinesSandbox
             index += length;
 
             // check if the last byte is ETX
-            var etxByte = buffer.Slice(index++, 1);
-            if (etxByte.Length == 0)
-            {
-                packet = default;
-                return false;
-            }
-            if (etxByte.FirstSpan[0] != ETX)
+            if(!TryGetSliced(buffer, index++, 1, out var etxByte) || etxByte.FirstSpan[0] != ETX)
             {
                 packet = default;
                 return false;
@@ -193,6 +184,18 @@ namespace PipelinesSandbox
                 }
                 Console.WriteLine();
             }
+        }
+
+        private static bool TryGetSliced(ReadOnlySequence<byte> sequence, int offset, int length, out ReadOnlySequence<byte> sliced)
+        {
+            if (sequence.Length < offset + length)
+            {
+                sliced = default;
+                return false;
+            }
+
+            sliced = sequence.Slice(offset, length);
+            return true;
         }
     }
 }
