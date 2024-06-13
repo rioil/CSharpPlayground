@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R3Sandbox", "R3Sandbox\R3Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipelinesSandbox", "PipelinesSandbox\PipelinesSandbox.csproj", "{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskTimeout", "TaskTimeout\TaskTimeout.csproj", "{0F000DA0-34F6-4EF4-AB64-555555B1E494}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfDrawing", "WpfDrawing\WpfDrawing.csproj", "{D3752C35-FF3F-45A4-B938-DF8BC5E7B674}"
 EndProject
 Global
@@ -53,6 +55,10 @@ Global
 		{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{711621D5-BCB8-46B4-A4E0-8F37D94DD8A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F000DA0-34F6-4EF4-AB64-555555B1E494}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F000DA0-34F6-4EF4-AB64-555555B1E494}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F000DA0-34F6-4EF4-AB64-555555B1E494}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F000DA0-34F6-4EF4-AB64-555555B1E494}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D3752C35-FF3F-45A4-B938-DF8BC5E7B674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D3752C35-FF3F-45A4-B938-DF8BC5E7B674}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3752C35-FF3F-45A4-B938-DF8BC5E7B674}.Release|Any CPU.ActiveCfg = Release|Any CPU
