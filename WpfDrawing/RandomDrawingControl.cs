@@ -1,12 +1,7 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Net;
-using System.Runtime.CompilerServices;
+﻿using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace WpfDrawing
 {
@@ -42,15 +37,13 @@ namespace WpfDrawing
     public class RandomDrawingControl : FrameworkElement
     {
         private const int NumOfLines = 1_000;
-        private readonly Line[] _lines = new Line[NumOfLines];
-        private readonly Dictionary<SolidColorBrush, Pen> _penCache = [];
+
         private readonly DrawingGroup _lineDrawings = new();
 
         private readonly Pen _crossLinePen;
         private readonly SolidColorBrush _crossLineBrush;
 
         private readonly Pen _selectRectPen;
-
         private SelectionRect? _selectionRect;
 
         private Transform _displayTransform = Transform.Identity;
@@ -85,16 +78,18 @@ namespace WpfDrawing
         private void InitializeLines()
         {
             using var context = _lineDrawings.Open();
+            Dictionary<SolidColorBrush, Pen> penCache = [];
+
             for (int i = 0; i < NumOfLines; i++)
             {
                 var startPoint = DrawingUtil.GetRandomPosition();
                 var endPoint = DrawingUtil.GetRandomPosition();
                 var lineBrush = DrawingUtil.GetRandomBrush();
-                if (!_penCache.TryGetValue(lineBrush, out var pen))
+                if (!penCache.TryGetValue(lineBrush, out var pen))
                 {
                     pen = new Pen(lineBrush, 10);
                     pen.TryFreeze();
-                    _penCache.Add(lineBrush, pen);
+                    penCache.Add(lineBrush, pen);
                 }
                 context.DrawLine(pen, startPoint, endPoint);
             }
@@ -104,41 +99,59 @@ namespace WpfDrawing
         {
             base.OnRender(drawingContext);
 
-            // draw background
-            drawingContext.DrawRectangle(Brushes.Black, null, new Rect(0, 0, ActualWidth, ActualHeight));
-
-            // draw lines
-            _lineDrawings.Transform = _displayTransform;
-            drawingContext.DrawDrawing(_lineDrawings);
-
-            // draw cross lines
-            if (IsMouseOver)
-            {
-                var position = Mouse.GetPosition(this);
-                var xStartPoint = new Point(0, position.Y);
-                var xEndPoint = new Point(ActualWidth, position.Y);
-                var yStartPoint = new Point(position.X, 0);
-                var yEndPoint = new Point(position.X, ActualHeight);
-                drawingContext.DrawLine(_crossLinePen, xStartPoint, xEndPoint);
-                drawingContext.DrawLine(_crossLinePen, yStartPoint, yEndPoint);
-                drawingContext.DrawEllipse(Brushes.Red, null, position, 4, 4);
-            }
-
-            // draw selection rectangle
-            if (_selectionRect.HasValue)
-            {
-                drawingContext.DrawRectangle(Brushes.Transparent, _selectRectPen, _selectionRect.Value);
-            }
-
-            // draw mouse coordinate
-            if (IsMouseOver)
-            {
-                var position = _displayTransform.Inverse.Transform(Mouse.GetPosition(this));
-                var text = new FormattedText($"{position.X:F2}, {position.Y:F2}", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, new Typeface("Arial"), 12, Brushes.White, 1);
-                drawingContext.DrawText(text, new Point(5, ActualHeight - 15));
-            }
+            DrawBackground(drawingContext);
+            DrawLines(drawingContext);
+            DrawCrossLines(drawingContext);
+            DrawSelectionRect(drawingContext);
+            DrawMouseCoordinateAndZoomRatio(drawingContext);
         }
 
+        #region rendering
+        private void DrawBackground(DrawingContext drawingContext)
+        {
+            drawingContext.DrawRectangle(Brushes.Black, null, new Rect(0, 0, ActualWidth, ActualHeight));
+        }
+
+        private void DrawLines(DrawingContext drawingContext)
+        {
+            _lineDrawings.Transform = _displayTransform;
+            drawingContext.DrawDrawing(_lineDrawings);
+        }
+
+        private void DrawCrossLines(DrawingContext drawingContext)
+        {
+            if (!IsMouseOver) { return; }
+
+            var position = Mouse.GetPosition(this);
+            var xStartPoint = new Point(0, position.Y);
+            var xEndPoint = new Point(ActualWidth, position.Y);
+            var yStartPoint = new Point(position.X, 0);
+            var yEndPoint = new Point(position.X, ActualHeight);
+
+            drawingContext.DrawLine(_crossLinePen, xStartPoint, xEndPoint);
+            drawingContext.DrawLine(_crossLinePen, yStartPoint, yEndPoint);
+            drawingContext.DrawEllipse(Brushes.Red, null, position, 4, 4);
+        }
+
+        private void DrawSelectionRect(DrawingContext drawingContext)
+        {
+            if (!_selectionRect.HasValue) { return; }
+
+            drawingContext.DrawRectangle(Brushes.Transparent, _selectRectPen, _selectionRect.Value);
+        }
+
+        private void DrawMouseCoordinateAndZoomRatio(DrawingContext drawingContext)
+        {
+            if (!IsMouseOver) { return; }
+
+            var position = _displayTransform.Inverse.Transform(Mouse.GetPosition(this));
+            var text = $"{position.X:F2}, {position.Y:F2} ({_displayTransform.Value.M11:P0})";
+            var formatted = new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, new Typeface("Arial"), 12, Brushes.White, 1);
+            drawingContext.DrawText(formatted, new Point(5, ActualHeight - 15));
+        }
+        #endregion
+
+        #region mouse event handlers
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             base.OnMouseEnter(e);
@@ -199,6 +212,7 @@ namespace WpfDrawing
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
             base.OnMouseWheel(e);
+            // zoom up/down
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
                 var zoomDelta = e.Delta / 120d / 10d;
@@ -211,12 +225,14 @@ namespace WpfDrawing
                 var zoomDeltaMatrix = new Matrix(1 + zoomDelta, 0, 0, 1 + zoomDelta, -center.X * zoomDelta, -center.Y * zoomDelta);
                 _displayTransform = new MatrixTransform(_displayTransform.Value * zoomDeltaMatrix);
             }
+            // scroll left/right
             else if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 var scrollDelta = e.Delta / 120d * 20;
                 var scrollDeltaMatrix = new Matrix(1, 0, 0, 1, scrollDelta, 0);
                 _displayTransform = new MatrixTransform(_displayTransform.Value * scrollDeltaMatrix);
             }
+            // scroll up/down
             else
             {
                 var scrollDelta = e.Delta / 120d * 20;
@@ -225,8 +241,10 @@ namespace WpfDrawing
             }
             InvalidateVisual();
         }
+        #endregion
 
         internal record struct Line(LineGeometry Geometry, SolidColorBrush Brush, Pen Pen);
+
         internal struct SelectionRect(Point startPoint, Point endPoint)
         {
             public SelectionRect(Point startPoint) : this(startPoint, startPoint) { }
