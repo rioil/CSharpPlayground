@@ -243,8 +243,6 @@ namespace WpfDrawing
         }
         #endregion
 
-        internal record struct Line(LineGeometry Geometry, SolidColorBrush Brush, Pen Pen);
-
         internal struct SelectionRect(Point startPoint, Point endPoint)
         {
             public SelectionRect(Point startPoint) : this(startPoint, startPoint) { }
