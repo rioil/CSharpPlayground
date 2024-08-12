@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="LivetCask" Version="4.0.2" />
-    <PackageReference Include="R3" Version="0.1.0" />
+    <PackageReference Include="R3" Version="1.2.3" />
   </ItemGroup>
 
 </Project>

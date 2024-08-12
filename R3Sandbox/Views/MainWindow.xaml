@@ -40,6 +40,6 @@
     <CheckBox Grid.Row="1" Content="IsAliveDebounced"
               IsChecked="{Binding IsAliveDebounced.Value}"
               IsEnabled="False" />
-    <TextBlock Grid.Row="2" Text="{Binding DeadTime.CurrentValue, StringFormat=Dead: {0}}" />
+    <TextBlock Grid.Row="2" Text="{Binding DeadTime.Value, StringFormat=Dead: {0}}" />
   </Grid>
 </Window>
