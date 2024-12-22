@@ -35,6 +35,9 @@
       <TabItem Header="Sample3DGeometry">
         <controls:Sample3DGeometry Margin="5"/>
       </TabItem>
+      <TabItem Header="3DMap">
+        <controls:Map Margin="5"/>
+      </TabItem>
     </TabControl>
   </Grid>
 </Window>
