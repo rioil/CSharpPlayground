@@ -15,6 +15,12 @@ namespace Wpf3D.Controls
         private static readonly Material InterFloorObjectMaterial = MaterialFactory.CreateDiffuseMaterial(Colors.Blue, 0.4);
         private static readonly Model3D FloorBasePlane = Model3DFactory.CreateXZPlane(5, 5, FloorMaterial);
 
+        public Camera MainCamera
+        {
+            get => Viewport.Camera;
+            set => Viewport.Camera = value;
+        }
+
         public Map()
         {
             InitializeComponent();
