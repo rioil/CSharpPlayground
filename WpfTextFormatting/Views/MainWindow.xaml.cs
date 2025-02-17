@@ -13,8 +13,6 @@ namespace WpfTextFormatting.Views
      */
     public partial class MainWindow : Window
     {
-        private CustomTextSource? _textSource;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -30,8 +28,15 @@ namespace WpfTextFormatting.Views
         {
             if (!IsLoaded) { return; }
 
-            var fontRendering = new FontRendering(20, TextAlignment.Left, [], Brushes.Black, new Typeface("Arial"));
-            _textSource = new CustomTextSource(pixelsPerDip, fontRendering);
+            //var fontRendering = new FontRendering(20, TextAlignment.Left, [], Brushes.Black, new Typeface("Arial"));
+            //var textSource = new CustomTextSource(pixelsPerDip, fontRendering);
+            var fontRenderings = new FontRendering[] {
+                new(26, TextAlignment.Left, [], Brushes.Red, new Typeface("Arial")),
+                new(20, TextAlignment.Left, [], Brushes.Blue, new Typeface("Arial")),
+                new(30, TextAlignment.Left, [], Brushes.Green, new Typeface("Arial")),
+                new(28, TextAlignment.Left, [], Brushes.Orange, new Typeface("Arial")),
+            };
+            var textSource = new ColorfulTextSource(pixelsPerDip, fontRenderings);
 
             var textSourcePosition = 0;
             var linePosition = new Point(0, 0);
@@ -39,13 +44,14 @@ namespace WpfTextFormatting.Views
             textDest = new DrawingGroup();
             using var drawingContext = textDest.Open();
 
-            _textSource.Text = "Hello, World!";
+            textSource.Text = "Hello, World!";
 
             var formatter = TextFormatter.Create();
-            while (textSourcePosition < _textSource.Text.Length)
+            while (textSourcePosition < textSource.Text.Length)
             {
-                var paragraphProperties = new GenericTextParagraphProperties(_textSource.FontRendering, pixelsPerDip);
-                using var textLine = formatter.FormatLine(_textSource, textSourcePosition, 96 * 6, paragraphProperties, null);
+                //var paragraphProperties = new GenericTextParagraphProperties(textSource.FontRendering, pixelsPerDip);
+                var paragraphProperties = new GenericTextParagraphProperties(textSource.FontRenderings[0], pixelsPerDip);
+                using var textLine = formatter.FormatLine(textSource, textSourcePosition, 96 * 6, paragraphProperties, null);
                 textLine.Draw(drawingContext, linePosition, InvertAxes.None);
                 linePosition.Y += textLine.Height;
                 textSourcePosition += textLine.Length;

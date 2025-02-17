@@ -6,7 +6,7 @@
     xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
     xmlns:v="clr-namespace:WpfTextFormatting.Views"
     xmlns:vm="clr-namespace:WpfTextFormatting.ViewModels"
-    Title="MainWindow"
+    Title="WPF - TextFormatting"
     Width="525"
     Height="350"
     Loaded="Window_Loaded">
