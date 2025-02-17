@@ -1,0 +1,46 @@
+﻿<Window
+    x:Class="WpfTextFormatting.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+    xmlns:v="clr-namespace:WpfTextFormatting.Views"
+    xmlns:vm="clr-namespace:WpfTextFormatting.ViewModels"
+    Title="MainWindow"
+    Width="525"
+    Height="350"
+    Loaded="Window_Loaded">
+
+  <Window.DataContext>
+    <vm:MainWindowViewModel />
+  </Window.DataContext>
+
+  <behaviors:Interaction.Triggers>
+    <!--  When ContentRendered event raised, Initialize method of ViewModel would be called.  -->
+    <behaviors:EventTrigger EventName="ContentRendered">
+      <l:LivetCallMethodAction MethodName="Initialize" MethodTarget="{Binding}" />
+    </behaviors:EventTrigger>
+
+    <!--  Dispose method is called, when Window closing.  -->
+    <behaviors:EventTrigger EventName="Closed">
+      <l:DataContextDisposeAction />
+    </behaviors:EventTrigger>
+
+    <!--  If you make user choose 'OK or Cancel' closing Window, then please use Window Close cancel Behavior.  -->
+
+  </behaviors:Interaction.Triggers>
+
+  <Grid>
+    <Border BorderBrush="Black" BorderThickness="1" Margin="5">
+      <Rectangle>
+        <Rectangle.Fill>
+          <DrawingBrush x:Name="textDrawingBrush" Stretch="None" AlignmentY="Top" AlignmentX="Left">
+            <DrawingBrush.Drawing>
+              <DrawingGroup x:Name="textDest"/>
+            </DrawingBrush.Drawing>
+          </DrawingBrush>
+        </Rectangle.Fill>
+      </Rectangle>
+    </Border>
+  </Grid>
+</Window>
