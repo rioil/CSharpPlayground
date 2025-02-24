@@ -1,11 +1,12 @@
 ﻿using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipelines;
 
 namespace PipelinesSandbox
 {
     /**
      * The packet that this program parses has the following structure.
-     * | STX (1byte [0x02]) | No. (1byte) | Length (1byte) | Content ($Length byte) | ETX (1byte [0x03]) |
+     * | STX (1byte [0x02]) | Sequence No. (1byte) | Length (2byte) | Content ($Length byte) | ETX (1byte [0x03]) |
      */
     internal class PacketExample
     {
@@ -19,7 +20,6 @@ namespace PipelinesSandbox
             var pipe = new Pipe();
             var writing = FillPipeAsync(pipe.Writer);
             var reading = ReadPipeAsync(pipe.Reader);
-
             await Task.WhenAll(writing, reading);
         }
 
@@ -64,7 +64,7 @@ namespace PipelinesSandbox
             byte[] contentBytes = new byte[contentLength];
             Random.Shared.NextBytes(contentBytes);
 
-            return [STX, (byte)no, (byte)contentLength, .. contentBytes, ETX];
+            return [STX, (byte)no, .. BitConverter.GetBytes((ushort)contentLength), .. contentBytes, ETX];
         }
 
         private static async Task ReadPipeAsync(PipeReader reader)
@@ -76,7 +76,7 @@ namespace PipelinesSandbox
 
                 while (TryReadPacket(ref buffer, out var packet))
                 {
-                    PrintSequence("R", packet);
+                    PrintSpan("R", packet.Serialize());
                 }
 
                 reader.AdvanceTo(buffer.Start, buffer.End);
@@ -91,18 +91,12 @@ namespace PipelinesSandbox
             Console.WriteLine("Reader completed!");
         }
 
-        private static bool TryReadPacket(ref ReadOnlySequence<byte> buffer, out ReadOnlySequence<byte> packet)
+        private static bool TryReadPacket(ref ReadOnlySequence<byte> buffer, [NotNullWhen(true)] out Packet? packet)
         {
             int index = 0;
 
             // check if the first byte is STX
-            var stxPosition = buffer.PositionOf(STX);
-            if (stxPosition == null)
-            {
-                packet = default;
-                return false;
-            }
-            if (!buffer.Start.Equals(stxPosition.Value))
+            if (buffer.Length == 0)
             {
                 packet = default;
                 return false;
@@ -115,22 +109,25 @@ namespace PipelinesSandbox
             index++;
 
             // get no. of packet
-            if (!TryGetSliced(buffer, index++, 1, out var _))
+            if (!TryGetSliced(buffer, index++, 1, out var noByte))
             {
                 packet = default;
                 return false;
             }
+            var no = noByte.FirstSpan[0];
 
             // get length of packet
-            if (!TryGetSliced(buffer, index++, 1, out var lengthByte))
+            Span<byte> lengthBytes = stackalloc byte[2];
+            if (!TryCopySliced(buffer, index, 2, lengthBytes))
             {
                 packet = default;
                 return false;
             }
-            var length = lengthByte.FirstSpan[0];
+            var length = BitConverter.ToUInt16(lengthBytes);
+            index += 2;
 
             // get content of packet
-            if (!TryGetSliced(buffer, index, length, out var _))
+            if (!TryGetSliced(buffer, index, length, out var contentBytes))
             {
                 packet = default;
                 return false;
@@ -138,11 +135,15 @@ namespace PipelinesSandbox
             index += length;
 
             // check if the last byte is ETX
-            if(!TryGetSliced(buffer, index++, 1, out var etxByte) || etxByte.FirstSpan[0] != ETX)
+            if (!TryGetSliced(buffer, index++, 1, out var etxByte) || etxByte.FirstSpan[0] != ETX)
             {
                 packet = default;
                 return false;
             }
+
+            // copy content to byte array
+            var content = new byte[length];
+            contentBytes.CopyTo(content);
 
             /*
              * ... | ETX | ...
@@ -150,9 +151,9 @@ namespace PipelinesSandbox
              *     ^ etxByte.Start
              * 
              * buffer.Slice(0, etxByte.Start) excludes ETX
-             * buffer.Slice(0, etxByte.End) includes it
+             * buffer.Slice(0, etxByte.End) includes ETX
              */
-            packet = buffer.Slice(0, etxByte.End);
+            packet = new Packet(no, length, content);
             buffer = buffer.Slice(etxByte.End);
             return true;
         }
@@ -196,6 +197,25 @@ namespace PipelinesSandbox
 
             sliced = sequence.Slice(offset, length);
             return true;
+        }
+
+        private static bool TryCopySliced(ReadOnlySequence<byte> sequence, int offset, int length, Span<byte> destination)
+        {
+            if (sequence.Length < offset + length)
+            {
+                return false;
+            }
+
+            sequence.Slice(offset, length).CopyTo(destination);
+            return true;
+        }
+
+        private record Packet(byte SequenceNumber, ushort Length, byte[] Content)
+        {
+            public byte[] Serialize()
+            {
+                return [STX, SequenceNumber, .. BitConverter.GetBytes(Length), .. Content, ETX];
+            }
         }
     }
 }
